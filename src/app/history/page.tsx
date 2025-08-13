@@ -101,6 +101,7 @@ export default function HistoryPage() {
             console.error('Error parsing options for history record:', record.id, e);
             options = [];
           }
+
             
           return (
             <div 
@@ -120,7 +121,8 @@ export default function HistoryPage() {
                   {options.map((option: string, index: number) => (
                     <li 
                       key={index} 
-                      className={`${option.charAt(0) === record.question.answer ? 'font-bold text-green-700' : ''} ${option.charAt(0) === record.userAnswer && record.userAnswer !== record.question.answer ? 'font-bold text-red-700' : ''}`}
+                      className={`${option.charAt(0) === record.question.answer ? 'font-bold text-green-700' : ''} ${option.charAt(0) === record.userAnswer && option.charAt(0) !== record.question.answer ? 'font-bold text-red-700' : ''}`}
+
                     >
                       {option}
                     </li>
