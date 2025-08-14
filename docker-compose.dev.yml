@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  nextjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=file:./prisma/dev.db
+    depends_on:
+      - prisma
+    command: npm run dev
+
+  prisma:
+    image: node:18-alpine
+    volumes:
+      - .:/app
+    working_dir: /app
+    environment:
+      - DATABASE_URL=file:./prisma/dev.db
+    command: npx prisma db push

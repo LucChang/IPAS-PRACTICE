@@ -8,11 +8,11 @@ async function generateQuestions(category: string, count: number = 20) {
   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash"});
   const prompt = `請生成${count}道關於iPAS資訊安全檢定的題目，主題為「${category}」。每道題目需要包含以下部分：
 - 題目內容 (content)
-- 四個選項，格式為JSON字符串數組，例如：["選項一", "選項二", "選項三", "選項四"]
+- 四個選項，格式為JSON字符串數組，例如：["a. 選項一", "b. 選項二", "c. 選項三", "d. 選項四"]
 - 正確答案 (answer)，必須是 a、b、c 或 d 其中一個
 - 答案解釋 (explanation)
 - 題目類別 (category)，必須是'${category}'
-請以JSON格式返回，且key的名稱需與上述英文相符。`;
+請以JSON格式返回，且key的名稱需與上述英文相符。每個題目必須有四個選項，不能少於四個選項。`;
   let text = '';
   try {
     const result = await model.generateContent(prompt);
@@ -63,7 +63,13 @@ async function generateQuestions(category: string, count: number = 20) {
       const questions = JSON.parse(cleanJsonText);
       console.log('Parsed questions from Gemini:', questions);
       
-      return Array.isArray(questions) ? questions : [];
+      // 確保每個題目都有四個選項
+      const validQuestions = Array.isArray(questions) ? questions.filter(q => {
+        return q.options && Array.isArray(q.options) && q.options.length === 4;
+      }) : [];
+      
+      console.log(`Filtered ${Array.isArray(questions) ? questions.length : 0} questions to ${validQuestions.length} valid questions with 4 options`);
+      return validQuestions;
     } catch (parseError) {
       console.error('Error parsing JSON:', parseError);
       console.error('Original text:', jsonText);

@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  nextjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - ./prisma/prod.db:/app/prisma/prod.db
+    environment:
+       - DATABASE_URL=file:./prisma/prod.db
+       - NODE_ENV=production
+    command: npm run start

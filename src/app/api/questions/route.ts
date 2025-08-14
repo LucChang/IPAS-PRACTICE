@@ -14,23 +14,27 @@ export async function GET(request: NextRequest) {
     
     // Ensure options is properly parsed
     const processedQuestions = questions.map(q => {
+      console.log(`Processing question ${q.id}, options type: ${typeof q.options}, value:`, q.options);
       let options: string[] = [];
       if (q.options) {
         if (typeof q.options === 'string') {
           try {
             const parsedOptions = JSON.parse(q.options);
-            if (Array.isArray(parsedOptions)) {
+            
+            // 新增處理物件格式的選項
+            if (typeof parsedOptions === 'object' && !Array.isArray(parsedOptions)) {
+              options = Object.values(parsedOptions).map(String);
+            } else if (Array.isArray(parsedOptions)) {
               options = parsedOptions.map(String);
             }
           } catch (error) {
-            // If parsing fails, options will remain an empty array.
             console.error(`Error parsing options for question ${q.id}:`, error);
           }
         } else if (Array.isArray(q.options)) {
-          // If it's already an array, just ensure its elements are strings.
           options = q.options.map(String);
         }
       }
+      console.log(`Finished processing question ${q.id}, final options:`, options);
       return {
         ...q,
         options,
