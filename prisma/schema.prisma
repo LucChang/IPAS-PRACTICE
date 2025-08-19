@@ -23,6 +23,7 @@ model Question {
   category    String   // 技術 or 管理
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  answered    Boolean  @default(false) // 是否已回答
   records     Record[] // 關聯到答題記錄
 }
 

@@ -48,6 +48,12 @@ export async function POST(request: NextRequest) {
         isCorrect,
       },
     });
+
+    // 更新題目的 answered 為 true
+    await prisma.question.update({
+      where: { id: questionId },
+      data: { answered: true },
+    });
     
     return NextResponse.json({ record: newRecord, isCorrect });
   } catch (error) {

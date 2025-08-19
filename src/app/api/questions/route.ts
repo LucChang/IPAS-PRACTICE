@@ -8,7 +8,10 @@ export async function GET(request: NextRequest) {
   
   try {
     const questions = await prisma.question.findMany({
-      where: category ? { category } : undefined,
+      where: {
+        answered: false,
+        ...(category ? { category } : {})
+      },
       orderBy: { createdAt: 'desc' },
     });
     
